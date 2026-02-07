@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
 import { MatFormFieldModule} from "@angular/material/form-field"; 
 import {MatInputModule} from '@angular/material/input';
@@ -33,5 +33,17 @@ export class CadastroComponent {
 
   salvar(){
     this.service.salvar(this.cliente);
+    this.limparFormulario()  
   }
+
+  limpar(form?: NgForm){
+    form?.resetForm();
+    this.cliente = Cliente.newCliente();
+  }
+
+  limparFormulario(){
+    this.cliente = Cliente.newCliente()
+  }
+
+
 }
