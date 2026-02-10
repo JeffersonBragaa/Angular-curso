@@ -8,7 +8,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import { Cliente } from './cliente';
 import { ClienteService } from '../cliente.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { query } from '@angular/animations';
 
 
@@ -32,7 +32,8 @@ export class CadastroComponent implements OnInit{
 
   constructor(
     private service: ClienteService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute, 
+    private router: Router
   ){
 
   }
@@ -53,8 +54,13 @@ export class CadastroComponent implements OnInit{
   }
 
   salvar(){
-    this.service.salvar(this.cliente);
-    this.limparFormulario()  
+    if(!this.atualizando){
+      this.service.salvar(this.cliente);
+      this.limparFormulario()  
+    } else {
+      this.service.atualizar(this.cliente);
+      this.router.navigate(['/consulta'])
+    }
   }
 
   limpar(form?: NgForm){
