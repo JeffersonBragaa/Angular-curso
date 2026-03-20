@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, Inject, inject} from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, NgForm } from '@angular/forms';
 import {MatCardModule} from '@angular/material/card';
@@ -10,7 +10,12 @@ import { Cliente } from './cliente';
 import { ClienteService } from '../cliente.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { query } from '@angular/animations';
-
+import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { BrasilapiService } from '../brasilapi.service';
+import { Estados, Municipios } from '../brasilapi.models';
+import { MatSelectModule } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -21,7 +26,12 @@ import { query } from '@angular/animations';
     MatFormFieldModule,
     MatInputModule, 
     MatIconModule, 
-    MatButtonModule
+    MatButtonModule, 
+    NgxMaskDirective, 
+    MatSelectModule, 
+    CommonModule
+  ],providers: [
+    provideNgxMask()
   ],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
@@ -29,9 +39,13 @@ import { query } from '@angular/animations';
 export class CadastroComponent implements OnInit{
   cliente: Cliente = Cliente.newCliente();
   atualizando: boolean = false;
+  snack: MatSnackBar = inject(MatSnackBar);
+  estados: Estados[] = [];  
+  municipios: Municipios[] = [];  
 
   constructor(
     private service: ClienteService,
+    private brasilapiService: BrasilapiService, 
     private route: ActivatedRoute, 
     private router: Router
   ){
@@ -51,15 +65,23 @@ export class CadastroComponent implements OnInit{
         }
       }
     })
+    this.carregarUFs();
   }
-
+  carregarUFs(){
+    this.brasilapiService.listarUfs().subscribe({
+      next: listaEstados => this.estados = listaEstados,
+      error: err => console.log("erro ao listar estados", err)
+    })
+  }
   salvar(){
     if(!this.atualizando){
       this.service.salvar(this.cliente);
       this.limparFormulario()  
+      this.mostrar_msg('Cliente cadastrado com sucesso!')
     } else {
       this.service.atualizar(this.cliente);
       this.router.navigate(['/consulta'])
+      this.mostrar_msg('Cliente atualizado com sucesso!')
     }
   }
 
@@ -72,5 +94,9 @@ export class CadastroComponent implements OnInit{
     this.cliente = Cliente.newCliente()
   }
 
-
+  mostrar_msg(msg: string){
+    this.snack.open(msg, 'Ok', {
+      duration: 3000
+    })
+  }
 }

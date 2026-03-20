@@ -27,7 +27,7 @@
                         <div fxLayout="column" fxFlex="400px">
                             <mat-form-field class="full-width">
                                 <mat-label>CPF: *</mat-label>
-                                <input type="text" [(ngModel)]="cliente.cpf" name="cpf" placeholder="000.000.000-00" matInput>
+                                <input type="text" [(ngModel)]="cliente.cpf" name="cpf" mask="000.000.000-00" placeholder="000.000.000-00" matInput>
                             </mat-form-field>
                         </div>
                     </div>
@@ -35,10 +35,26 @@
                         <div fxLayout="column" fxFlex="400px">
                             <mat-form-field class="full-width">
                                 <mat-label>Data de Nascimento: *</mat-label>
-                                <input type="text" [(ngModel)]="cliente.dataNascimento" name="dataNascimento" matInput>
+                                <input type="text" [(ngModel)]="cliente.dataNascimento" name="dataNascimento" mask="00/00/0000" placeholder="Digite sua data de nascimento" matInput>
                             </mat-form-field>
                         </div>
                     </div>
+
+                    <div fxLauout="row" fxLayoutAling="start" fxLayoutGap="16px">
+                        <div fxLayout="column" fxFlex="400px">
+                            <mat-form-field class="full-width">
+                                <mat-label>UF: *</mat-label>
+                               <mat-select>
+                                <mat-option *ngFor="let uf of estados" [value]="uf.sigla">
+                                    {{uf.sigla}} - {{uf.nome}}
+                                </mat-option>
+                               </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    
+
                 </mat-card-content>
                 <mat-card-actions>
                     @if(!atualizando){
