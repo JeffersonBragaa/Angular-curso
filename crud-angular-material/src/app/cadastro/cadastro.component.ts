@@ -14,8 +14,9 @@ import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrasilapiService } from '../brasilapi.service';
 import { Estados, Municipios } from '../brasilapi.models';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
+import { Subscriber } from 'rxjs';
 
 
 @Component({
@@ -62,6 +63,10 @@ export class CadastroComponent implements OnInit{
         if(clienteEncontrado){
           this.atualizando = true;
           this.cliente = clienteEncontrado;
+          if(this.cliente.uf){
+            const event = {value: this.cliente.uf}
+            this.carregarMunicipios(event as MatSelectChange)
+          }
         }
       }
     })
@@ -71,6 +76,14 @@ export class CadastroComponent implements OnInit{
     this.brasilapiService.listarUfs().subscribe({
       next: listaEstados => this.estados = listaEstados,
       error: err => console.log("erro ao listar estados", err)
+    })
+  }
+
+  carregarMunicipios(event: MatSelectChange){
+    const ufSelecionada = event.value;
+    this.brasilapiService.listarMunicipios(ufSelecionada).subscribe({
+      next: listarMunicipio => this.municipios = listarMunicipio,
+      error: erro => console.log("Ocorreu um erro: ", erro)
     })
   }
   salvar(){
